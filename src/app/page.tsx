@@ -217,6 +217,19 @@ export default function LandingPage() {
     if (code.length === 6) router.push(`/room/${code.toUpperCase()}`);
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15, delayChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden">
       <RetroPosterBg />
@@ -224,66 +237,77 @@ export default function LandingPage() {
 
       {/* Content */}
       <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7 }}
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
         className="relative z-10 w-full max-w-sm text-center"
       >
         {/* Hero airplane */}
-        <motion.div
-          className="mb-8 inline-block"
-          animate={{ y: [0, -6, 0], rotate: [0, 1, -1, 0] }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          <AirplaneIcon size={160} />
+        <motion.div variants={itemVariants} className="mb-8 inline-block">
+          <motion.div
+            animate={{ y: [0, -6, 0], rotate: [0, 1, -1, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <AirplaneIcon size={160} />
+          </motion.div>
         </motion.div>
 
-        <h1
-          className="heading text-5xl md:text-7xl font-black tracking-[0.15em] mb-2 text-white drop-shadow-md"
-          style={{ textShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
+        <motion.h1
+          variants={itemVariants}
+          className="heading text-5xl md:text-7xl font-black tracking-[0.15em] mb-2 drop-shadow-xl text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-[#c4a44e]"
         >
           TAYAN
-        </h1>
-        <p className="text-base mb-10 text-white/80">
+        </motion.h1>
+        <motion.p variants={itemVariants} className="text-base mb-10 font-medium text-white/90 drop-shadow-md">
           Your thoughts take flight
-        </p>
+        </motion.p>
 
         {/* Card */}
-        <div className="card relative overflow-hidden">
-          <label className="block text-left text-[10px] uppercase tracking-widest font-medium mb-2 fids-font" style={{ color: 'var(--ink-muted)' }}>
-            Room Code
-          </label>
-          <input
-            type="text"
-            value={code}
-            onChange={(e) => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6))}
-            placeholder="_ _ _ _ _ _"
-            maxLength={6}
-            className="input-flight"
-            onKeyDown={(e) => e.key === 'Enter' && handleJoin()}
-          />
-          <button
-            onClick={handleJoin}
-            disabled={code.length !== 6}
-            className="btn-takeoff w-full mt-5"
-          >
-            <span>Board Flight</span>
-            <SmallPlaneIcon size={20} />
-          </button>
-        </div>
+        <motion.div
+          variants={itemVariants}
+          animate={{ y: [0, -4, 0] }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+        >
+          <div className="card relative overflow-hidden">
+            <label className="block text-left text-[10px] uppercase tracking-widest font-medium mb-2 fids-font" style={{ color: 'var(--ink-muted)' }}>
+              Room Code
+            </label>
+            <input
+              type="text"
+              value={code}
+              onChange={(e) => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6))}
+              placeholder="_ _ _ _ _ _"
+              maxLength={6}
+              className="input-flight"
+              onKeyDown={(e) => e.key === 'Enter' && handleJoin()}
+            />
+            <motion.button
+              onClick={handleJoin}
+              disabled={code.length !== 6}
+              className="btn-takeoff w-full mt-6"
+              whileHover={code.length === 6 ? { scale: 1.02 } : {}}
+              whileTap={code.length === 6 ? { scale: 0.98 } : {}}
+            >
+              <span>Board Flight</span>
+              <SmallPlaneIcon size={20} />
+            </motion.button>
+          </div>
+        </motion.div>
 
         {/* Footer */}
-        <p className="mt-8 text-xs text-white/70">
-          Organizer?{' '}
-          <button onClick={() => router.push(userId ? '/dashboard' : '/login')} className="font-semibold underline underline-offset-2 text-white">
-            {userId ? 'Dashboard' : 'Login'}
-          </button>
-        </p>
-        <p className="mt-3 text-xs" style={{ color: isNight ? '#4a6080' : 'rgba(255,255,255,0.5)' }}>
-          <button onClick={() => router.push('/contact')} className="underline underline-offset-2 hover:opacity-80 transition-opacity">
-            Contact Developer
-          </button>
-        </p>
+        <motion.div variants={itemVariants} className="mt-8">
+          <p className="text-xs text-white/80 font-medium drop-shadow">
+            Organizer?{' '}
+            <button onClick={() => router.push(userId ? '/dashboard' : '/login')} className="font-bold underline underline-offset-4 decoration-white/50 hover:decoration-white transition-colors text-white">
+              {userId ? 'Dashboard' : 'Login'}
+            </button>
+          </p>
+          <p className="mt-4 text-xs font-medium" style={{ color: isNight ? '#8aa0b8' : 'rgba(255,255,255,0.7)' }}>
+            <button onClick={() => router.push('/contact')} className="underline underline-offset-4 decoration-transparent hover:decoration-current transition-colors">
+              Contact Developer
+            </button>
+          </p>
+        </motion.div>
       </motion.div>
     </div>
   );
